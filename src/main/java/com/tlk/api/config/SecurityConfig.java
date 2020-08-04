@@ -18,9 +18,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Resource(name = "userService")
-//    private UserDetailsService userDetailsService;
-
     @Bean
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
@@ -36,12 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public TokenStore tokenStore() {
         return new InMemoryTokenStore();
     }
-
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        //auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
-//        auth.inMemoryAuthentication().withUser("user").password("{noop}pass").roles("USER");
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
