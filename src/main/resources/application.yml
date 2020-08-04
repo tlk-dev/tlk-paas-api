@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: prod
+
+---
+
+spring:
+  profiles: local
+
+server:
+  port: 8080
+
+---
+
+spring:
+  profiles: prod
+
+server:
+  port: 8081
+
+
+spring.main.allow-bean-definition-overriding: true
+#logging:
+#  config: classpath:log4j2.properties
