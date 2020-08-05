@@ -1,6 +1,5 @@
 package com.tlk.api.controller;
 
-import com.tlk.api.inter.UserJapInter;
 import com.tlk.api.jpa.UserJpa;
 import com.tlk.api.jpa.repository.UserJpaRepository;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,14 +28,12 @@ public class SampleController {
 
     @RequestMapping(method = RequestMethod.GET, value = "getUserJpaList")
     @ApiOperation(value = "UserJpa테이블정보 가져오기")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "param", value = "키값", dataType = "string", paramType = "query", required = true),
-//    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "param", value = "키값", dataType = "string", paramType = "query", required = true),
+    })
     public ResponseEntity getUserJpaList() {
         List<UserJpa> userJpaList = userJpaRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
-        //System.out.println(param + " :: call ok");
         logger.info("info : " + userJpaList);
-
         return ResponseEntity.ok(userJpaList);
     }
 
@@ -47,9 +44,7 @@ public class SampleController {
     })
     public ResponseEntity getUserJpa(@RequestParam(value = "userName") String useName) {
         UserJpa userJpa = userJpaRepository.findAllByUserName(useName);
-        //System.out.println(param + " :: call ok");
         logger.info("info : " + userJpa);
-
         return ResponseEntity.ok(userJpa);
     }
 
@@ -61,11 +56,8 @@ public class SampleController {
     })
     public ResponseEntity getUserJpa(@RequestParam(value = "userName") String useName,
                                      @RequestParam(value = "password") String password) {
-        //UserJapInter userJpa = userJpaRepository.findByUserNameAndPassword(useName, password);
-        UserJapInter userJpa = userJpaRepository.findByUserNameAndPassword(useName, password);
-        //System.out.println(param + " :: call ok");
+        UserJpa userJpa = userJpaRepository.findByUserNameAndPassword(useName, password);
         logger.info("info : " + userJpa);
-
         return ResponseEntity.ok(userJpa);
     }
 
@@ -77,12 +69,9 @@ public class SampleController {
     })
     public ResponseEntity saveUserJpa(@RequestParam(value = "userName") String useName,
                                       @RequestParam(value = "password") String password) {
-        //UserJapInter userJpa = userJpaRepository.findByUserNameAndPassword(useName, password);
         UserJpa userJpa = new UserJpa(useName, password);
         userJpaRepository.save(userJpa);
-        //System.out.println(param + " :: call ok");
         logger.info("info : " + userJpa);
-
         return ResponseEntity.ok(userJpa);
     }
 
@@ -99,7 +88,6 @@ public class SampleController {
         UserJpa userJpa = new UserJpa(id, useName, password);
         userJpaRepository.save(userJpa);
         logger.info("info : " + userJpa);
-
         return ResponseEntity.ok(userJpa);
     }
 

@@ -1,5 +1,6 @@
 package com.tlk.api.config;
 
+import com.tlk.api.jpa.UserJpa;
 import com.tlk.api.service.UserService;
 import com.tlk.api.vo.UserVO;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,13 @@ public class OauthAuthenticationProvider implements AuthenticationProvider {
         String username = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
         //DB 사용자정보 테이블 정보 조회
-        UserVO userInfo = userService.getUser(username, password);
+        UserJpa userInfo = userService.getUser(username, password);
         if (userInfo == null) {
             throw new BadCredentialsException(username);
         }
+        /**
+         * TODO 정상 토큰 발급 시 사용자 테이블에 토큰정보 업데이트 기능 추가
+         */
         return new UsernamePasswordAuthenticationToken(username, password, getAuthorities());
     }
 
