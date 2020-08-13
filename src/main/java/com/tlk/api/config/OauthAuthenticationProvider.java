@@ -1,6 +1,8 @@
 package com.tlk.api.config;
 
+import com.tlk.api.jpa.MemberJpa;
 import com.tlk.api.jpa.UserJpa;
+import com.tlk.api.service.MemberService;
 import com.tlk.api.service.UserService;
 import com.tlk.api.vo.UserVO;
 import lombok.RequiredArgsConstructor;
@@ -27,19 +29,23 @@ public class OauthAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MemberService memberService;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        String loginId = (String) authentication.getPrincipal();
+        String loginPassword = (String) authentication.getCredentials();
         //DB 사용자정보 테이블 정보 조회
-        UserJpa userInfo = userService.getUser(username, password);
-        if (userInfo == null) {
-            throw new BadCredentialsException(username);
+        //UserJpa userInfo = userService.getUser(username, password);
+        MemberJpa memberInfo = memberService.getMember(loginId, loginPassword);
+        if (memberInfo == null) {
+            throw new BadCredentialsException(loginId);
         }
         /**
          * TODO 정상 토큰 발급 시 사용자 테이블에 토큰정보 업데이트 기능 추가
          */
-        return new UsernamePasswordAuthenticationToken(username, password, getAuthorities());
+        return new UsernamePasswordAuthenticationToken(loginId, loginPassword, getAuthorities());
     }
 
     @Override public boolean supports(Class<?> authentication) {

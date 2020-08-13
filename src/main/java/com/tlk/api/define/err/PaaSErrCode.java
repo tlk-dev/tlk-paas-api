@@ -1,0 +1,37 @@
+package com.tlk.api.define.err;
+
+public enum PaaSErrCode {
+
+    BAD_REQUEST(400, "Bad request, parameter not accepted"),
+    NOT_AUTHENTICATE(401, "Not authenticated"),
+
+    CUSTOM_DUPLICATED_USER_ID(900, "CUSTOM :: 아이디 중복")
+    ;
+
+    int code;
+    String msg;
+
+    PaaSErrCode(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public int code() {
+        return this.code;
+    }
+
+    public String msg() {
+        return this.msg;
+    }
+
+    public static String getPaaSErrorMessage(int code) {
+        for (PaaSErrCode errCode : PaaSErrCode.values()) {
+            if (code == errCode.code) {
+                return errCode.msg();
+            }
+        }
+        return null;
+    }
+
+
+}

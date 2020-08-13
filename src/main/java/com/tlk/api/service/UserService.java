@@ -27,7 +27,4 @@ public class UserService {
         logger.info("userInfo ::: " + userInfo.toString());
         return userInfo;
     }
-
-
-
 }

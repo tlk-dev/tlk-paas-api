@@ -100,5 +100,6 @@ public class SampleController {
         userJpaRepository.deleteById(id);
         return ResponseEntity.ok(id);
     }
+
 }
 
