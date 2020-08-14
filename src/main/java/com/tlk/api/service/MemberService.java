@@ -2,13 +2,14 @@ package com.tlk.api.service;
 
 import com.tlk.api.define.err.PaaSErrCode;
 import com.tlk.api.define.err.PaaSException;
-import com.tlk.api.jpa.MemberDetailJpa;
-import com.tlk.api.jpa.MemberDeviceJpa;
-import com.tlk.api.jpa.MemberJpa;
-import com.tlk.api.jpa.UserJpa;
-import com.tlk.api.jpa.repository.MemberDetailJpaRepository;
-import com.tlk.api.jpa.repository.MemberDeviceJpaRepository;
-import com.tlk.api.jpa.repository.MemberJpaRepository;
+import com.tlk.api.jpa.member.MemberDetailJpa;
+import com.tlk.api.jpa.member.MemberDeviceJpa;
+import com.tlk.api.jpa.member.MemberJpa;
+import com.tlk.api.jpa.member.MemberPointJpa;
+import com.tlk.api.jpa.member.repository.MemberDetailJpaRepository;
+import com.tlk.api.jpa.member.repository.MemberDeviceJpaRepository;
+import com.tlk.api.jpa.member.repository.MemberJpaRepository;
+import com.tlk.api.jpa.member.repository.MemberPointJpaRepository;
 import com.tlk.api.utils.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,15 @@ public class MemberService {
     @Autowired
     private MemberDeviceJpaRepository memberDeviceJpaRepository;
 
+    @Autowired
+    private MemberPointJpaRepository memberPointJpaRepository;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public Integer regMember(String loginId, String loginPassword, String memberType) {
         //아이디 중복 체크
         Long memberCount = memberJpaRepository.countByLoginId(loginId);
-        logger.info("memberCount ::" + memberCount);
         if (memberCount > 0L) {
+            logger.error("memberCount ::" + memberCount);
             throw new PaaSException(PaaSErrCode.CUSTOM_DUPLICATED_USER_ID);
         }
         MemberJpa memberJpa = new MemberJpa(loginId, loginPassword, memberType);
@@ -61,6 +65,12 @@ public class MemberService {
         );
         memberDeviceJpaRepository.save(deviceJpa);
         return deviceJpa.getMemberPushId();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void regMemberPoint(Integer memberId, Integer point) {
+        MemberPointJpa pointJpa = new MemberPointJpa(memberId, String.valueOf(point));
+        memberPointJpaRepository.save(pointJpa);
     }
 
     @Transactional(readOnly = true)

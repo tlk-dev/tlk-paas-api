@@ -1,7 +1,6 @@
-package com.tlk.api.jpa;
+package com.tlk.api.jpa.member;
 
-
-import com.tlk.api.define.MemberTypeDefine;
+import com.tlk.api.define.member.MemberTypeDefine;
 import com.tlk.api.utils.DateUtils;
 import com.tlk.api.utils.SecurityUtil;
 import lombok.Builder;

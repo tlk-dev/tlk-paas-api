@@ -1,5 +1,8 @@
-package com.tlk.api.define;
+package com.tlk.api.define.member;
 
+/**
+ * 멤버 종류 정의
+ */
 public enum MemberTypeDefine {
     ADMIN(1, "관리자"),
     USER(2, "사용자"),

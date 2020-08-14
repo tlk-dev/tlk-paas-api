@@ -1,7 +1,6 @@
-package com.tlk.api.jpa.repository;
+package com.tlk.api.jpa.member.repository;
 
-import com.tlk.api.jpa.MemberDetailJpa;
-import com.tlk.api.jpa.MemberDeviceJpa;
+import com.tlk.api.jpa.member.MemberDeviceJpa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberDeviceJpaRepository extends JpaRepository<MemberDeviceJpa, Integer> {

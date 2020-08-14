@@ -1,10 +1,8 @@
 package com.tlk.api.config;
 
-import com.tlk.api.jpa.MemberJpa;
-import com.tlk.api.jpa.UserJpa;
+import com.tlk.api.jpa.member.MemberJpa;
 import com.tlk.api.service.MemberService;
 import com.tlk.api.service.UserService;
-import com.tlk.api.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

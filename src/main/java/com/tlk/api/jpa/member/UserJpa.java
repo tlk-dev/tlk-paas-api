@@ -1,4 +1,4 @@
-package com.tlk.api.jpa;
+package com.tlk.api.jpa.member;
 
 import lombok.Builder;
 import lombok.Getter;

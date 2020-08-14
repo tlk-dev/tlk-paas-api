@@ -1,7 +1,7 @@
 package com.tlk.api.controller;
 
-import com.tlk.api.jpa.UserJpa;
-import com.tlk.api.jpa.repository.UserJpaRepository;
+import com.tlk.api.jpa.member.UserJpa;
+import com.tlk.api.jpa.member.repository.UserJpaRepository;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
