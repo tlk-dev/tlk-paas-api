@@ -35,7 +35,7 @@ public class ShippingController {
     @RequestMapping(value = "/guList", method = RequestMethod.GET)
     @ApiOperation("배송가능한 구 가져오기")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "shippingCityId", value = "배송가능한 시 아이디(/cityList 아이디 값)", dataType = "int", paramType = "query", required = true)
+            @ApiImplicitParam(name = "shippingCityId", value = "배송가능한 시 아이디(/shipping/cityList 아이디 값)", dataType = "int", paramType = "query", required = true)
     })
     public ResponseEntity<ApiResultListDTO> getShippingGuList(@RequestParam("shippingCityId") Integer shippingCityId) {
         List<ShippingGuJpa> guList = shippingService.getShippingGuList(shippingCityId);
