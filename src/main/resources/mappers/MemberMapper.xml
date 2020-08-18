@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tlk.api.mapper.MemberMapper">
+
+    <select id="selectMemberAtLogin" resultType="MemberLoginVO">
+        SELECT A.member_id, A.member_type, B.*, C.*
+        FROM paas_member A
+        LEFT JOIN paas_member_detail B
+        ON A.member_id = B.member_id
+        LEFT JOIN paas_member_device C
+        ON A.member_id = C.member_id
+        WHERE 1=1
+        AND A.login_id = #{loginId}
+        AND A.login_password = #{loginPassword}
+        AND A.member_type = #{memberType}
+    </select>
+
+</mapper>

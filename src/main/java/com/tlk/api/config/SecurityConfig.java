@@ -77,6 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 , "/api/member/regMember"
                 ,"/api/member/regShippingDriver"
                 ,"/api/member/getMemberInfo"
+                ,"/api/member/login"
         );
     }
 }

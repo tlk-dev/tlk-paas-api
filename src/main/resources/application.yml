@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: local
 
 ---
 
@@ -9,6 +9,12 @@ spring:
 
 server:
   port: 8080
+
+#logging:
+#  level:
+#    jdbc.sqlonly: info
+
+spring.main.allow-bean-definition-overriding: true
 
 ---
 

@@ -5,7 +5,11 @@ public enum PaaSErrCode {
     BAD_REQUEST(400, "Bad request, parameter not accepted"),
     NOT_AUTHENTICATE(401, "Not authenticated"),
 
-    CUSTOM_DUPLICATED_USER_ID(900, "CUSTOM :: 아이디 중복")
+    CUSTOM_PARAM_ERROR_MEMBER_ID(800, "PARAM :: MEMBER_ID 없음"),
+
+    CUSTOM_DUPLICATED_USER_ID(900, "CUSTOM :: 아이디 중복"),
+    CUSTOM_LOGIN_ERROR(901, "CUSTOM :: 로그인 에러(아이디 또는 비밀번호가 틀림)"),
+    CUSTOM_ADMIN_NOT_APPROVE(902, "CUSTOM :: 관리자 승인하지 않은 배송기사")
     ;
 
     int code;

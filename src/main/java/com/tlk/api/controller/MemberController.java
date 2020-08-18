@@ -2,12 +2,12 @@ package com.tlk.api.controller;
 
 import com.tlk.api.define.PaasCodeDefine;
 import com.tlk.api.define.member.MemberTypeDefine;
+import com.tlk.api.dto.ApiResultObjectDTO;
+import com.tlk.api.repository.MemberRepository;
 import com.tlk.api.service.MemberService;
 import com.tlk.api.service.ShippingService;
 import com.tlk.api.utils.JsonBuilder;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +24,15 @@ public class MemberController {
     @Autowired
     private ShippingService shippingService;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @RequestMapping(value = "/regMember", method = RequestMethod.POST)
     @ApiOperation("회원 가입")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "loginId", value = "아이디", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberName", value = "이름", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberMobileNumber", value = "핸드폰번호(01012341234)", dataType = "int", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberZipCode", value = "우편번호(12345)", dataType = "int", paramType = "query", required = false),
@@ -43,34 +46,30 @@ public class MemberController {
             @ApiImplicitParam(name = "pushToken", value = "푸시 토큰 값", dataType = "String", paramType = "query", required = false),
             @ApiImplicitParam(name = "isPush", value = "푸시허용여부(false : 비허용, true : 허용)", dataType = "boolean", paramType = "query", required = true)
     })
-    public @ResponseBody String regMember(@RequestParam(value = "loginId") String loginId,
-                                          @RequestParam(value = "loginPassword") String loginPassword,
-                                          @RequestParam(value = "memberType") String memberType,
-                                          @RequestParam(value = "memberName") String memberName,
-                                          @RequestParam(value = "memberMobileNumber") String memberMobileNumber,
-                                          @RequestParam(value = "memberZipCode", required = false) String memberZipCode,
-                                          @RequestParam(value = "memberAddress", required = false) String memberAddress,
-                                          @RequestParam(value = "memberAddressDetail", required = false) String memberAddressDetail,
-                                          @RequestParam(value = "memberBirthday", required = false) String memberBirthday,
-                                          @RequestParam(value = "memberGender", required = false) String memberGender,
-                                          @RequestParam(value = "memberEmailAddress") String memberEmailAddress,
-                                          @RequestParam(value = "deviceUuId") String deviceUuId,
-                                          @RequestParam(value = "osType") Integer osType,
-                                          @RequestParam(value = "pushToken", required = false) String pushToken,
-                                          @RequestParam(value = "isPush") boolean isPush) {
-        Integer memberId = memberService.regMember(loginId, loginPassword, memberType);
-        if (memberId > 0) {
-            memberService.regMemberDetail(
-                    memberId, memberName, memberMobileNumber, memberZipCode, memberAddress,
-                    memberAddressDetail, memberBirthday, memberGender, memberEmailAddress
-            );
-            memberService.regMemberDevice(memberId, deviceUuId, osType, pushToken, isPush);
-            //사용자 일때만 포인트 등록
-            if (MemberTypeDefine.getMemberType(memberType) == 2) {
-                memberService.regMemberPoint(memberId, 0);
-            }
-        }
-        return new JsonBuilder().add(PaasCodeDefine.RESULT, memberId).build();
+    @ApiResponses(value = {
+            @ApiResponse(code = 900, message = "CUSTOM :: 아이디 중복")
+    })
+    public ResponseEntity<ApiResultObjectDTO> regMember(@RequestParam(value = "loginId") String loginId,
+                                                        @RequestParam(value = "loginPassword") String loginPassword,
+                                                        @RequestParam(value = "memberType") String memberType,
+                                                        @RequestParam(value = "memberName") String memberName,
+                                                        @RequestParam(value = "memberMobileNumber") String memberMobileNumber,
+                                                        @RequestParam(value = "memberZipCode", required = false) String memberZipCode,
+                                                        @RequestParam(value = "memberAddress", required = false) String memberAddress,
+                                                        @RequestParam(value = "memberAddressDetail", required = false) String memberAddressDetail,
+                                                        @RequestParam(value = "memberBirthday", required = false) String memberBirthday,
+                                                        @RequestParam(value = "memberGender", required = false) String memberGender,
+                                                        @RequestParam(value = "memberEmailAddress") String memberEmailAddress,
+                                                        @RequestParam(value = "deviceUuId") String deviceUuId,
+                                                        @RequestParam(value = "osType") Integer osType,
+                                                        @RequestParam(value = "pushToken", required = false) String pushToken,
+                                                        @RequestParam(value = "isPush") boolean isPush) {
+
+        ApiResultObjectDTO resultObjectDTO = memberRepository.regMemberRepository(
+                loginId, loginPassword, memberType, memberName, memberMobileNumber, memberZipCode, memberAddress,
+                memberAddressDetail, memberBirthday, memberGender, memberEmailAddress, deviceUuId, osType, pushToken, isPush
+        );
+        return ResponseEntity.ok(resultObjectDTO);
     }
 
     @RequestMapping(value = "/regShippingDriver", method = RequestMethod.POST)
@@ -87,7 +86,10 @@ public class MemberController {
             @ApiImplicitParam(name = "shippingStartTime", value = "배송 시작 시간(HH:MM)", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "shippingEndTime", value = "배송 마감 시간(HH:MM)", dataType = "string", paramType = "query", required = true),
     })
-    public @ResponseBody String regShippingDriverInfo(
+    @ApiResponses(value = {
+        @ApiResponse(code = 800, message = "PARAM :: MEMBER_ID 없음")
+    })
+    public ResponseEntity<ApiResultObjectDTO> regShippingDriverInfo(
                                         @RequestParam(value = "memberId") Integer memberId,
                                         @RequestParam(value = "shippingGuId") Integer shippingGuId,
                                         @RequestParam(value = "bankName", required = false) String bankName,
@@ -98,24 +100,31 @@ public class MemberController {
                                         @RequestParam(value = "shippingDriverType") Integer shippingDriverType,
                                         @RequestParam(value = "shippingStartTime") String shippingStartTime,
                                         @RequestParam(value = "shippingEndTime") String shippingEndTime) {
+        ApiResultObjectDTO result = new ApiResultObjectDTO();
         if (memberId > 0) {
-            shippingService.regShippingDriver(
+            result = shippingService.regShippingDriver(
                     memberId, shippingGuId, bankName, bankAccount, vehicleType, vehicleNumber, vehicleStatus,
                     shippingDriverType, shippingStartTime, shippingEndTime, false, false
             );
         }
-        return new JsonBuilder().add(PaasCodeDefine.RESULT, memberId).build();
+        return ResponseEntity.ok(result);
     }
 
-    @RequestMapping(value = "/getMemberInfo", method = RequestMethod.GET)
-    @ApiOperation("")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @ApiOperation("회원 로그인")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "loginId", value = "아이디", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true)
+            @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true)
     })
-    public ResponseEntity getMember(@RequestParam(value = "loginId") String loginId,
-                                    @RequestParam(value = "loginPassword") String loginPassword) {
-        return ResponseEntity.ok(memberService.getMember(loginId, loginPassword));
+    @ApiResponses(value = {
+            @ApiResponse(code = 901, message = "CUSTOM :: 로그인 에러(아이디 또는 비밀번호가 틀림)"),
+            @ApiResponse(code = 902, message = "CUSTOM :: 관리자 승인하지 않은 배송기사")
+    })
+    public ResponseEntity<ApiResultObjectDTO> getLoginMember(@RequestParam(value = "loginId") String loginId,
+                                    @RequestParam(value = "loginPassword") String loginPassword,
+                                    @RequestParam(value = "memberType") String memberType) {
+        return ResponseEntity.ok(memberService.getLoginMember(loginId, loginPassword, memberType));
     }
 
 }

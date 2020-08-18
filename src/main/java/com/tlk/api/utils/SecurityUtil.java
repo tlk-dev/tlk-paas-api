@@ -25,4 +25,8 @@ public class SecurityUtil {
     	return sha;
     }
 
+    public static void main(String[] args) {
+    	System.out.println(">>" + encryptSHA256("1234"));
+	}
+
 }

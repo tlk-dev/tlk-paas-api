@@ -1,7 +1,10 @@
 package com.tlk.api.service;
 
+import com.tlk.api.define.PaasCodeDefine;
 import com.tlk.api.define.err.PaaSErrCode;
 import com.tlk.api.define.err.PaaSException;
+import com.tlk.api.define.member.MemberTypeDefine;
+import com.tlk.api.dto.ApiResultObjectDTO;
 import com.tlk.api.jpa.member.MemberDetailJpa;
 import com.tlk.api.jpa.member.MemberDeviceJpa;
 import com.tlk.api.jpa.member.MemberJpa;
@@ -10,7 +13,10 @@ import com.tlk.api.jpa.member.repository.MemberDetailJpaRepository;
 import com.tlk.api.jpa.member.repository.MemberDeviceJpaRepository;
 import com.tlk.api.jpa.member.repository.MemberJpaRepository;
 import com.tlk.api.jpa.member.repository.MemberPointJpaRepository;
+import com.tlk.api.jpa.shipping.ShippingDriverJpa;
+import com.tlk.api.mapper.MemberMapper;
 import com.tlk.api.utils.SecurityUtil;
+import com.tlk.api.vo.MemberLoginVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +41,14 @@ public class MemberService {
     @Autowired
     private MemberPointJpaRepository memberPointJpaRepository;
 
+    @Autowired
+    private ShippingService shippingService;
+
+    @Autowired
+    private MemberMapper memberMapper;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public Integer regMember(String loginId, String loginPassword, String memberType) {
-        //아이디 중복 체크
-        Long memberCount = memberJpaRepository.countByLoginId(loginId);
-        if (memberCount > 0L) {
-            logger.error("memberCount ::" + memberCount);
-            throw new PaaSException(PaaSErrCode.CUSTOM_DUPLICATED_USER_ID);
-        }
         MemberJpa memberJpa = new MemberJpa(loginId, loginPassword, memberType);
         memberJpaRepository.save(memberJpa);
         return memberJpa.getMemberId();
@@ -79,5 +85,29 @@ public class MemberService {
                 loginId, SecurityUtil.encryptSHA256(loginPassword)
         );
         return memberInfo;
+    }
+
+    @Transactional(readOnly = true)
+    public ApiResultObjectDTO getLoginMember(String loginId, String loginPassword, String memberType) {
+        int code = PaasCodeDefine.OK;
+        MemberLoginVO memberLogin = memberMapper.selectMemberAtLogin(
+                loginId, SecurityUtil.encryptSHA256(loginPassword), MemberTypeDefine.getMemberType(memberType)
+        );
+        if (memberLogin == null) {
+            code = PaaSErrCode.CUSTOM_LOGIN_ERROR.code();
+        } else {
+            //배송기사일때
+            if (memberLogin.getMemberType() == 3) {
+                ShippingDriverJpa shippingDriverInfo = shippingService.getShippingDriverInfo(memberLogin.getMemberId());
+                //관리자 승인 여부 확인
+                if (shippingDriverInfo.getAdminApproveYn()) {
+                    memberLogin.setShippingDriverInfo( shippingDriverInfo );
+                } else {
+                    memberLogin = null;
+                    code = PaaSErrCode.CUSTOM_ADMIN_NOT_APPROVE.code();
+                }
+            }
+        }
+        return new ApiResultObjectDTO(memberLogin, code);
     }
 }
