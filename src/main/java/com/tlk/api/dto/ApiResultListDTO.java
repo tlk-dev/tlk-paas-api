@@ -4,20 +4,22 @@ import com.tlk.api.define.PaasCodeDefine;
 import com.tlk.api.define.err.PaaSErrCode;
 import lombok.Data;
 
-@Data
-public class ApiResultObjectDTO {
+import java.util.List;
 
-    private Object result;
+@Data
+public class ApiResultListDTO {
+
+    private List<?> result;
 
     private int resultCode;
 
     private String resultMsg;
 
-    public ApiResultObjectDTO(){}
+    public ApiResultListDTO(){}
 
-    public ApiResultObjectDTO(Object result, int code) {
+    public ApiResultListDTO(List<?>list, int code) {
+        this.result = list;
         this.resultCode = code;
-        this.result = result;
         this.resultMsg = PaaSErrCode.getPaaSErrorMessage(code) == null ? PaasCodeDefine.SUCCESS : PaaSErrCode.getPaaSErrorMessage(code);
     }
 }

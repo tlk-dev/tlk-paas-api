@@ -2,6 +2,7 @@ package com.tlk.api.controller;
 
 import com.tlk.api.define.PaasCodeDefine;
 import com.tlk.api.define.member.MemberTypeDefine;
+import com.tlk.api.dto.ApiResultListDTO;
 import com.tlk.api.dto.ApiResultObjectDTO;
 import com.tlk.api.repository.MemberRepository;
 import com.tlk.api.service.MemberService;
