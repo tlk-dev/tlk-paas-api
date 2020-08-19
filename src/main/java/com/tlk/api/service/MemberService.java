@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class MemberService {
 
@@ -89,12 +91,12 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public ApiResultObjectDTO getLoginMember(String loginId, String loginPassword, String memberType) {
-        int code = PaasCodeDefine.OK;
+        int resultCode = PaasCodeDefine.OK;
         MemberLoginVO memberLogin = memberMapper.selectMemberAtLogin(
                 loginId, SecurityUtil.encryptSHA256(loginPassword), MemberTypeDefine.getMemberType(memberType)
         );
         if (memberLogin == null) {
-            code = PaaSErrCode.CUSTOM_LOGIN_ERROR.code();
+            resultCode = PaaSErrCode.CUSTOM_LOGIN_ERROR.code();
         } else {
             //배송기사일때
             if (memberLogin.getMemberType() == 3) {
@@ -104,10 +106,37 @@ public class MemberService {
                     memberLogin.setShippingDriverInfo( shippingDriverInfo );
                 } else {
                     memberLogin = null;
-                    code = PaaSErrCode.CUSTOM_ADMIN_NOT_APPROVE.code();
+                    resultCode = PaaSErrCode.CUSTOM_ADMIN_NOT_APPROVE.code();
                 }
             }
         }
-        return new ApiResultObjectDTO(memberLogin, code);
+        return new ApiResultObjectDTO(memberLogin, resultCode);
+    }
+
+    @Transactional(readOnly = true)
+    public ApiResultObjectDTO getLoginId(String memberName, String memberMobileNumber) {
+        int resultCode = PaasCodeDefine.OK;
+        MemberJpa memberJpa = new MemberJpa();
+        //member_detail에서 이름과 핸드폰번로호 조회
+        MemberDetailJpa detailJpa = memberDetailJpaRepository.findByMemberNameAndMemberMobileNumber(memberName, memberMobileNumber);
+        if (detailJpa == null) {
+            resultCode = PaaSErrCode.CUSTOM_NOT_USER.code();
+        } else {
+            //조회된 사용자가 있으면 로그인 아이디 가져오기
+            /**
+             * TODO 특정 필드만 가져오도록 수정(아이디, 생성일)
+             */
+            Optional<MemberJpa> optional = memberJpaRepository.findById(detailJpa.getMemberId());
+            memberJpa = optional.get();
+        }
+        return new ApiResultObjectDTO(memberJpa, resultCode);
+    }
+
+    public void modifyMemberPassword(Integer memberId, String newPassword) {
+        Optional<MemberJpa> memberJpa = memberJpaRepository.findById(memberId);
+        if (memberJpa != null) {
+            MemberJpa updateMemberJpa = new MemberJpa(memberJpa, newPassword);
+            memberJpaRepository.save(updateMemberJpa);
+        }
     }
 }

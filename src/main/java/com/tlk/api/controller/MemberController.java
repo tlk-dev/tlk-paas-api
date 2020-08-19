@@ -128,4 +128,31 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getLoginMember(loginId, loginPassword, memberType));
     }
 
+    @RequestMapping(value = "/findLoginId", method = RequestMethod.GET)
+    @ApiOperation("회원 아이디 찾기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberName", value = "회원 이름", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "memberMobileNumber", value = "회원 핸드폰 번호", dataType = "string", paramType = "query", required = true)
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = 903, message = "CUSTOM :: 사용자가 없음")
+    })
+    public ResponseEntity<ApiResultObjectDTO> findLoginId(@RequestParam(value = "memberName") String memberName,
+                                                             @RequestParam(value = "memberMobileNumber") String memberMobileNumber) {
+        return ResponseEntity.ok(memberService.getLoginId(memberName, memberMobileNumber));
+    }
+
+    @RequestMapping(value = "/modifyPassword", method = RequestMethod.PUT)
+    @ApiOperation("회원 비밀번호 변경")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "회원 아이디", dataType = "int", paramType = "query", required = true),
+            @ApiImplicitParam(name = "newPassword", value = "변경될 새로운 비밀번호", dataType = "string", paramType = "query", required = true)
+    })
+    public ResponseEntity<ApiResultObjectDTO> modifyMemberPassword(@RequestParam(value = "memberId") Integer memberId,
+                                                                   @RequestParam(value = "newPassword") String newPassword) {
+        memberService.modifyMemberPassword(memberId, newPassword);
+        ApiResultObjectDTO resultObjectDTO = new ApiResultObjectDTO(memberId, PaasCodeDefine.OK);
+        return ResponseEntity.ok(resultObjectDTO);
+    }
+
 }

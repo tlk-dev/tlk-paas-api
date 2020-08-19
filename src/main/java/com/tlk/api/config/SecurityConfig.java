@@ -72,12 +72,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         // swagger 관련 리소스 시큐리티 필터 제거
         web.ignoring().antMatchers(
-                "/v2/api-docs", "/swagger-resources/**",
-                "/swagger-ui.html", "/webjars/**", "/swagger/**"
+                "/v2/api-docs"
+                , "/swagger-resources/**"
+                ,"/swagger-ui.html"
+                , "/webjars/**"
+                , "/swagger/**"
                 , "/api/member/regMember"
                 ,"/api/member/regShippingDriver"
                 ,"/api/member/getMemberInfo"
                 ,"/api/member/login"
+                ,"/api/member/findLoginId"
+                ,"/api/member/modifyPassword"
                 ,"/api/shipping/cityList"
                 ,"/api/shipping/guList"
         );

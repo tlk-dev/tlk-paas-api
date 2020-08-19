@@ -9,7 +9,8 @@ public enum PaaSErrCode {
 
     CUSTOM_DUPLICATED_USER_ID(900, "CUSTOM :: 아이디 중복"),
     CUSTOM_LOGIN_ERROR(901, "CUSTOM :: 로그인 에러(아이디 또는 비밀번호가 틀림)"),
-    CUSTOM_ADMIN_NOT_APPROVE(902, "CUSTOM :: 관리자 승인하지 않은 배송기사")
+    CUSTOM_ADMIN_NOT_APPROVE(902, "CUSTOM :: 관리자 승인하지 않은 배송기사"),
+    CUSTOM_NOT_USER(903, "CUSTOM :: 사용자가 없음")
     ;
 
     int code;

@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @NoArgsConstructor
 @Getter
@@ -46,6 +47,15 @@ public class MemberJpa implements Serializable {
         this.memberType = MemberTypeDefine.getMemberType(memberType);
         this.dismissYn = false;
         this.createDate = DateUtils.returnNow();
+    }
+
+    public MemberJpa(Optional<MemberJpa>optional, String newPassword) {
+        this.memberId = optional.get().memberId;
+        this.loginId = optional.get().getLoginId();
+        this.loginPassword = SecurityUtil.encryptSHA256(newPassword);
+        this.memberType = optional.get().getMemberType();
+        this.dismissYn = optional.get().dismissYn;
+        this.createDate = optional.get().createDate;
     }
 
 }

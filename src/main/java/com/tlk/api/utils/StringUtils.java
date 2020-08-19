@@ -14,4 +14,9 @@ public class StringUtils {
         }
         return str;
     }
+
+    public static void main(String[] args) {
+        String s = "TP_0000001";
+        System.out.println(TlkPaasUtils.generatePackageCode(s));
+    }
 }
