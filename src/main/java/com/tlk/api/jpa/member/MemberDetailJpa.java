@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "PAAS_MEMBER_DETAIL")
+@Table(name = "paas_member_detail")
 public class MemberDetailJpa {
     // 인덱스
     @Id

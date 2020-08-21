@@ -17,7 +17,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @Entity
-@Table(name = "PAAS_MEMBER")
+@Table(name = "paas_member")
 public class MemberJpa implements Serializable {
 
     // 인덱스
