@@ -34,7 +34,7 @@ public class MemberController {
     private MemberRepository memberRepository;
 
     @RequestMapping(value = "/regMember", method = RequestMethod.POST)
-    @ApiOperation("회원 가입")
+    @ApiOperation("회원 가입11")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "loginId", value = "아이디", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
