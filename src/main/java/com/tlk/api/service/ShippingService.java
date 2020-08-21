@@ -33,7 +33,7 @@ public class ShippingService {
     @Transactional(propagation = Propagation.REQUIRED)
     public ApiResultObjectDTO regShippingDriver(Integer memberId, Integer shippingGuId, String bankName, String bankCode, Integer vehicleType,
                                      String vehicleNumber, Integer vehicleStatus, Integer shippingDriverType, String shippingStartTime,
-                                     String shippingEndTime, boolean adminApproveYn, boolean shippingPossibleYn) {
+                                     String shippingEndTime, boolean adminApproveYn, boolean shippingPossibleYn, String driverImgFile) {
         int code = PaasCodeDefine.OK;
         Integer shippingDriverId = null;
         if (memberId == null) {
@@ -41,7 +41,7 @@ public class ShippingService {
         } else {
             ShippingDriverJpa driverJpa = new ShippingDriverJpa(
                     memberId, shippingGuId, bankName, bankCode, vehicleType, vehicleNumber, vehicleStatus,
-                    shippingDriverType, shippingStartTime, shippingEndTime, adminApproveYn, shippingPossibleYn
+                    shippingDriverType, shippingStartTime, shippingEndTime, adminApproveYn, shippingPossibleYn, driverImgFile
             );
             shippingDriverJpaRepository.save(driverJpa);
 

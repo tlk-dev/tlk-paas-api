@@ -9,7 +9,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -116,6 +118,72 @@ public class DateUtils {
         Date today = new Date();
         SimpleDateFormat sdf;
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(today);
+    }
+
+    public static String returnNowDateByYyyymmddhhmmss() {
+        Date today = new Date();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+        return sdf.format(today);
+    }
+
+    /**
+     * 현재 년도를 리턴
+     * @return
+     */
+    public static String getNowYear() {
+        Date today = new Date();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat("yyyy");
+        return sdf.format(today);
+    }
+
+    /**
+     * <pre>
+     * 1. Comment : yyyy-mm-dd 형식의 값으로 더한 날짜를 구하기
+     * 2. 작성자 : 안지호
+     * 3. 작성일 : 2016. 07. 26
+     * </pre>
+     * @param yyyy_mm_dd
+     * @param type
+     * @param plusDay
+     * @return type:YYYY => yyyy, type:MMDD => MMdd, type:YYYYMMDD => yyyy-MM-dd)
+     */
+    public static String plusDay(String yyyy_mm_dd, String type, int plusDay) {
+        String MMdd = "";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = dateFormat.parse(yyyy_mm_dd);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, plusDay);
+        String strDate = dateFormat.format(cal.getTime());
+        String[] str = strDate.split("-");
+        if ("MMDD".equals(type)) {
+            MMdd = str[1]+"-"+str[2];
+        } else if ("YYYY".equals(type)) {
+            MMdd = str[0];
+        } else if ("YYYYMMDD".equals(type)) {
+            MMdd = strDate;
+        }
+        return MMdd;
+    }
+
+    /**
+     * 현재 날짜를 리턴
+     * @param dateType 날짜형식(ex : yyyy-MM-dd, yyyyMMdd ....)
+     * @return
+     */
+    public static String returnToDate(String dateType) {
+        Date today = new Date();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat(dateType);
         return sdf.format(today);
     }
 

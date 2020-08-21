@@ -1,5 +1,7 @@
 package com.tlk.api.define;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class PaasCodeDefine {
 
     public static final String SUCCESS = "SUCCESS";

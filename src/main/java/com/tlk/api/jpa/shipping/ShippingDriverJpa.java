@@ -54,9 +54,12 @@ public class ShippingDriverJpa {
     // 배송 가능 여부
     private Boolean shippingPossibleYn;
 
+    //배송기사 이미지 파일명
+    private String driverImgFile;
+
     public ShippingDriverJpa(Integer memberId, Integer shippingGuId, String bankName, String bankAccount, Integer vehicleType,
                              String vehicleNumber, Integer vehicleStatus, Integer shippingDriverType, String shippingStartTime,
-                             String shippingEndTime, Boolean adminApproveYn, Boolean shippingPossibleYn) {
+                             String shippingEndTime, Boolean adminApproveYn, Boolean shippingPossibleYn, String driverImgFile) {
         this.memberId = memberId;
         this.shippingGuId = shippingGuId;
         this.bankName = bankName;
@@ -69,6 +72,7 @@ public class ShippingDriverJpa {
         this.shippingEndTime = StringUtils.isNullValue(shippingEndTime, PaasCodeDefine.DEFAULT_TIME);
         this.adminApproveYn = adminApproveYn;
         this.shippingPossibleYn = shippingPossibleYn;
+        this.driverImgFile = driverImgFile;
     }
 
 }

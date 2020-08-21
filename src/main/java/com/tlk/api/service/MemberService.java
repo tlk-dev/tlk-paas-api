@@ -9,6 +9,7 @@ import com.tlk.api.jpa.member.MemberDetailJpa;
 import com.tlk.api.jpa.member.MemberDeviceJpa;
 import com.tlk.api.jpa.member.MemberJpa;
 import com.tlk.api.jpa.member.MemberPointJpa;
+import com.tlk.api.jpa.member.inter.MemberJpaFindIdInter;
 import com.tlk.api.jpa.member.repository.MemberDetailJpaRepository;
 import com.tlk.api.jpa.member.repository.MemberDeviceJpaRepository;
 import com.tlk.api.jpa.member.repository.MemberJpaRepository;
@@ -16,6 +17,7 @@ import com.tlk.api.jpa.member.repository.MemberPointJpaRepository;
 import com.tlk.api.jpa.shipping.ShippingDriverJpa;
 import com.tlk.api.mapper.MemberMapper;
 import com.tlk.api.utils.SecurityUtil;
+import com.tlk.api.utils.StringUtils;
 import com.tlk.api.vo.MemberLoginVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,11 +125,10 @@ public class MemberService {
             resultCode = PaaSErrCode.CUSTOM_NOT_USER.code();
         } else {
             //조회된 사용자가 있으면 로그인 아이디 가져오기
-            /**
-             * TODO 특정 필드만 가져오도록 수정(아이디, 생성일)
-             */
-            Optional<MemberJpa> optional = memberJpaRepository.findById(detailJpa.getMemberId());
-            memberJpa = optional.get();
+            MemberJpaFindIdInter findIdInter = memberJpaRepository.findByMemberId(detailJpa.getMemberId());
+
+            memberJpa.setLoginId(findIdInter.getLoginId());
+            memberJpa.setCreateDate(StringUtils.convertYyyymmdd(findIdInter.getCreateDate()));
         }
         return new ApiResultObjectDTO(memberJpa, resultCode);
     }

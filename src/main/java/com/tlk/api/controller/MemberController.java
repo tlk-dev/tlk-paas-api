@@ -5,6 +5,7 @@ import com.tlk.api.define.member.MemberTypeDefine;
 import com.tlk.api.dto.ApiResultListDTO;
 import com.tlk.api.dto.ApiResultObjectDTO;
 import com.tlk.api.repository.MemberRepository;
+import com.tlk.api.service.FileUploadService;
 import com.tlk.api.service.MemberService;
 import com.tlk.api.service.ShippingService;
 import com.tlk.api.utils.JsonBuilder;
@@ -12,6 +13,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -26,6 +28,9 @@ public class MemberController {
     private ShippingService shippingService;
 
     @Autowired
+    private FileUploadService fileUploadService;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @RequestMapping(value = "/regMember", method = RequestMethod.POST)
@@ -35,16 +40,16 @@ public class MemberController {
             @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberName", value = "이름", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(name = "memberMobileNumber", value = "핸드폰번호(01012341234)", dataType = "int", paramType = "query", required = true),
-            @ApiImplicitParam(name = "memberZipCode", value = "우편번호(12345)", dataType = "int", paramType = "query", required = false),
-            @ApiImplicitParam(name = "memberAddress", value = "주소", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(name = "memberMobileNumber", value = "핸드폰번호(01012341234)", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "memberZipCode", value = "우편번호(12345)", dataType = "string", paramType = "query", required = false),
+            @ApiImplicitParam(name = "memberAddress", value = "주소", dataType = "string", paramType = "query", required = false),
             @ApiImplicitParam(name = "memberAddressDetail", value = "주소 상세", dataType = "string", paramType = "query", required = false),
-            @ApiImplicitParam(name = "memberBirthday", value = "생년월일(YYYY-MM-DD)", dataType = "String", paramType = "query", required = false),
-            @ApiImplicitParam(name = "memberGender", value = "성별(M:남, F:여)", dataType = "int", paramType = "query", required = false),
-            @ApiImplicitParam(name = "memberEmailAddress", value = "이메일 주소", dataType = "int", paramType = "query", required = false),
+            @ApiImplicitParam(name = "memberBirthday", value = "생년월일(YYYY-MM-DD)", dataType = "string", paramType = "query", required = false),
+            @ApiImplicitParam(name = "memberGender", value = "성별(M:남, F:여)", dataType = "string", paramType = "query", required = false),
+            @ApiImplicitParam(name = "memberEmailAddress", value = "이메일 주소", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "deviceUuId", value = "기기 UUID", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "osType", value = "os종류(1: 안드, 2: IOS)", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "pushToken", value = "푸시 토큰 값", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(name = "osType", value = "os종류(1: 안드, 2: IOS)", dataType = "int", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pushToken", value = "푸시 토큰 값", dataType = "string", paramType = "query", required = false),
             @ApiImplicitParam(name = "isPush", value = "푸시허용여부(false : 비허용, true : 허용)", dataType = "boolean", paramType = "query", required = true)
     })
     @ApiResponses(value = {
@@ -86,26 +91,30 @@ public class MemberController {
             @ApiImplicitParam(name = "shippingDriverType", value = "배송기사 종류(1:배송, 2:회수, 3:배송+회수)", dataType = "int", paramType = "query", required = true),
             @ApiImplicitParam(name = "shippingStartTime", value = "배송 시작 시간(HH:MM)", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "shippingEndTime", value = "배송 마감 시간(HH:MM)", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "driverImgFile", value = "배송기사 증명사진 파일", dataType = "file", paramType = "form", required = false)
     })
     @ApiResponses(value = {
         @ApiResponse(code = 800, message = "PARAM :: MEMBER_ID 없음")
     })
     public ResponseEntity<ApiResultObjectDTO> regShippingDriverInfo(
-                                        @RequestParam(value = "memberId") Integer memberId,
-                                        @RequestParam(value = "shippingGuId") Integer shippingGuId,
-                                        @RequestParam(value = "bankName", required = false) String bankName,
-                                        @RequestParam(value = "bankAccount", required = false) String bankAccount,
-                                        @RequestParam(value = "vehicleType") Integer vehicleType,
-                                        @RequestParam(value = "vehicleNumber") String vehicleNumber,
-                                        @RequestParam(value = "vehicleStatus") Integer vehicleStatus,
-                                        @RequestParam(value = "shippingDriverType") Integer shippingDriverType,
-                                        @RequestParam(value = "shippingStartTime") String shippingStartTime,
-                                        @RequestParam(value = "shippingEndTime") String shippingEndTime) {
+            @RequestParam(value = "memberId") Integer memberId,
+            @RequestParam(value = "shippingGuId") Integer shippingGuId,
+            @RequestParam(value = "bankName", required = false) String bankName,
+            @RequestParam(value = "bankAccount", required = false) String bankAccount,
+            @RequestParam(value = "vehicleType") Integer vehicleType,
+            @RequestParam(value = "vehicleNumber") String vehicleNumber,
+            @RequestParam(value = "vehicleStatus") Integer vehicleStatus,
+            @RequestParam(value = "shippingDriverType") Integer shippingDriverType,
+            @RequestParam(value = "shippingStartTime") String shippingStartTime,
+            @RequestParam(value = "shippingEndTime") String shippingEndTime,
+            MultipartHttpServletRequest request) {
         ApiResultObjectDTO result = new ApiResultObjectDTO();
         if (memberId > 0) {
+            String driverImgFile = fileUploadService.uploadSingleFile(request);
+
             result = shippingService.regShippingDriver(
                     memberId, shippingGuId, bankName, bankAccount, vehicleType, vehicleNumber, vehicleStatus,
-                    shippingDriverType, shippingStartTime, shippingEndTime, false, false
+                    shippingDriverType, shippingStartTime, shippingEndTime, false, false, driverImgFile
             );
         }
         return ResponseEntity.ok(result);
