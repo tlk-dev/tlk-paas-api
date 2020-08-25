@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tlk.api.mapper.ShippingMapper">
+
+    <select id="selectProductSumByShippingOrderId" resultType="int">
+        SELECT SUM(product_count) FROM paas_shipping_order_product WHERE shipping_order_id = #{shippingOrderId}
+    </select>
+
+    <select id="selectShippingOrderListByRequestDate" resultType="ShippingOrderListVO">
+        SELECT A.shipping_order_id, A.client_order_code, A.shipping_order_status, B.packaging_code
+        FROM paas_shipping_order A
+        LEFT OUTER JOIN paas_packaging B
+        ON A.packaging_id = B.packaging_id
+        WHERE 1=1
+        AND A.shipping_request_date = #{requestDate}
+        ORDER BY A.shipping_order_id DESC
+    </select>
+</mapper>

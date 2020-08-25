@@ -5,6 +5,7 @@ import com.tlk.api.define.err.PaaSErrCode;
 import com.tlk.api.define.err.PaaSException;
 import com.tlk.api.define.member.MemberTypeDefine;
 import com.tlk.api.dto.ApiResultObjectDTO;
+import com.tlk.api.jpa.member.MemberJpa;
 import com.tlk.api.jpa.member.repository.MemberJpaRepository;
 import com.tlk.api.service.MemberService;
 import org.slf4j.Logger;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class MemberRepository {
@@ -24,7 +27,8 @@ public class MemberRepository {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    public ApiResultObjectDTO regMemberRepository(String loginId, String loginPassword, String memberType,
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ApiResultObjectDTO regMemberRepository(String loginId, String loginPassword, boolean isUser, boolean isDeliver, boolean isOperator,
                                                   String memberName, String memberMobileNumber, String memberZipCode, String memberAddress,
                                                   String memberAddressDetail, String memberBirthday, String memberGender, String memberEmailAddress,
                                                   String deviceUuId, Integer osType, String pushToken, boolean isPush) {
@@ -37,7 +41,7 @@ public class MemberRepository {
             code = PaaSErrCode.CUSTOM_DUPLICATED_USER_ID.code();
         } else {
             //paas_member 저장
-            memberId = memberService.regMember(loginId, loginPassword, memberType);
+            memberId = memberService.regMember(loginId, loginPassword, isUser, isDeliver, isOperator);
             if (memberId > 0) {
                 memberService.regMemberDetail(
                         memberId, memberName, memberMobileNumber, memberZipCode, memberAddress,
@@ -45,11 +49,17 @@ public class MemberRepository {
                 );
                 memberService.regMemberDevice(memberId, deviceUuId, osType, pushToken, isPush);
                 //사용자 일때만 포인트 등록
-                if (MemberTypeDefine.getMemberType(memberType) == 2) {
+                if (isUser) {
                     memberService.regMemberPoint(memberId, 0);
                 }
+//                if (MemberTypeDefine.getMemberType(memberType) == 2) {
+//                    memberService.regMemberPoint(memberId, 0);
+//                }
             }
         }
-        return new ApiResultObjectDTO(memberId, code);
+        MemberJpa resultJpa = new MemberJpa();
+        resultJpa.setMemberId(memberId);
+
+        return new ApiResultObjectDTO(resultJpa, code);
     }
 }

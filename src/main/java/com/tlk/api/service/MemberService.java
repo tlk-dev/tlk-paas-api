@@ -52,8 +52,8 @@ public class MemberService {
     private MemberMapper memberMapper;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Integer regMember(String loginId, String loginPassword, String memberType) {
-        MemberJpa memberJpa = new MemberJpa(loginId, loginPassword, memberType);
+    public Integer regMember(String loginId, String loginPassword, boolean isUser, boolean isDeliver, boolean isOperator) {
+        MemberJpa memberJpa = new MemberJpa(loginId, loginPassword, isUser, isDeliver, isOperator);
         memberJpaRepository.save(memberJpa);
         return memberJpa.getMemberId();
     }
@@ -101,7 +101,7 @@ public class MemberService {
             resultCode = PaaSErrCode.CUSTOM_LOGIN_ERROR.code();
         } else {
             //배송기사일때
-            if (memberLogin.getMemberType() == 3) {
+            if (MemberTypeDefine.getMemberType(memberType) == 3) {
                 ShippingDriverJpa shippingDriverInfo = shippingService.getShippingDriverInfo(memberLogin.getMemberId());
                 //관리자 승인 여부 확인
                 if (shippingDriverInfo.getAdminApproveYn()) {

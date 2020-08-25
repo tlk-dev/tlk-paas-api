@@ -3,7 +3,7 @@
 <mapper namespace="com.tlk.api.mapper.MemberMapper">
 
     <select id="selectMemberAtLogin" resultType="MemberLoginVO">
-        SELECT A.member_id, A.member_type, B.*, C.*
+        SELECT A.member_id, B.*, C.*
         FROM paas_member A
         LEFT JOIN paas_member_detail B
         ON A.member_id = B.member_id
@@ -12,7 +12,15 @@
         WHERE 1=1
         AND A.login_id = #{loginId}
         AND A.login_password = #{loginPassword}
-        AND A.member_type = #{memberType}
+        <if test="memberType == 2">
+            AND IS_USER = 1
+        </if>
+        <if test="memberType == 3">
+            AND IS_DELIVER = 1
+        </if>
+        <if test="memberType == 4">
+            AND IS_OPERATOR = 1
+        </if>
     </select>
 
 </mapper>

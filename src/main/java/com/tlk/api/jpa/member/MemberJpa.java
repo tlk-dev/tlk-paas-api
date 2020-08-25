@@ -31,29 +31,41 @@ public class MemberJpa implements Serializable {
     // 회원 로그인 패스워드
     private String loginPassword;
 
-    // 회원 종류(1,2,3...)
-    private Integer memberType;
-
     // 탈퇴여부
     private Boolean dismissYn;
 
     // 생성일
     private String createDate;
 
+    // 사용자 여부
+    private Boolean isUser;
+
+    // 배송기사 여부
+    private Boolean isDeliver;
+
+    // 관리자 여부
+    private Boolean isAdmin;
+
+    // 오퍼레이터 여부
+    private Boolean isOperator;
+
     @Builder
-    public MemberJpa(String loginId, String loginPassword, String memberType) {
+    public MemberJpa(String loginId, String loginPassword, boolean isUser, boolean isDeliver, boolean isOperator) {
         this.loginId = loginId;
         this.loginPassword = SecurityUtil.encryptSHA256(loginPassword);
-        this.memberType = MemberTypeDefine.getMemberType(memberType);
+        //this.memberType = MemberTypeDefine.getMemberType(memberType);
         this.dismissYn = false;
         this.createDate = DateUtils.returnNow();
+        this.isUser = isUser;
+        this.isAdmin = false;
+        this.isDeliver= isDeliver;
+        this.isOperator = isOperator;
     }
 
     public MemberJpa(Optional<MemberJpa>optional, String newPassword) {
         this.memberId = optional.get().memberId;
         this.loginId = optional.get().getLoginId();
         this.loginPassword = SecurityUtil.encryptSHA256(newPassword);
-        this.memberType = optional.get().getMemberType();
         this.dismissYn = optional.get().dismissYn;
         this.createDate = optional.get().createDate;
     }

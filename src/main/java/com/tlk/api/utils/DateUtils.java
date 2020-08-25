@@ -124,7 +124,7 @@ public class DateUtils {
     public static String returnNowDateByYyyymmddhhmmss() {
         Date today = new Date();
         SimpleDateFormat sdf;
-        sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+        sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         return sdf.format(today);
     }
 
@@ -187,7 +187,42 @@ public class DateUtils {
         return sdf.format(today);
     }
 
+    /**
+     * yyyy-mm-dd -> yyyymmdd 변환
+     */
+    public static String convertDateFormat(String date) throws Exception {
+        SimpleDateFormat fromDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmdd");
+        Date originDate = fromDateFormat.parse(date);
+        String newDate = dateFormat.format(originDate);
+        return newDate;
+    }
+
+    /**
+     * 요일구하기
+     * @param date
+     * @return
+     */
+    public static String getDayOfWeek(String date) {
+        String day = "";
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String[] week = {"일","월","화","수","목","금","토"};
+        Calendar cal = Calendar.getInstance();
+        Date getDate;
+        try {
+            getDate = format.parse(convertDateFormat(date));
+            cal.setTime(getDate);
+            int w = cal.get(Calendar.DAY_OF_WEEK)-1;
+            day = week[w];
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return day;
+    }
+
     public static void main(String[] args) throws Exception {
-        System.out.println(returnNow());
+        System.out.println(getDayOfWeek("2020-11-01"));
     }
 }

@@ -85,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ,"/api/member/modifyPassword"
                 ,"/api/shipping/cityList"
                 ,"/api/shipping/guList"
+                ,"/api/shipping/regTestOrderData"
         );
     }
 }

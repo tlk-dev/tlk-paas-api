@@ -61,7 +61,8 @@ public class FileUploadService {
                         FileUtil.fileDelete(originalFileName);
                         logger.info("originalFileName ---------------> " + originalFileName);
 
-                        fileName = FileUtil.concatPath(todayDirectory.toString(), serverFile.getName());
+                        fileName = FileUtil.concatPath(DateUtils.getNowYear(), mmdd, serverFile.getName());
+                        logger.info("fileName ---------------> " + fileName);
                     }
                 }
             }

@@ -38,7 +38,10 @@ public class MemberController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "loginId", value = "아이디", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true),
+            //@ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "isUser", value = "사용자 여부", dataType = "boolean", paramType = "query", required = true, defaultValue = "false"),
+            @ApiImplicitParam(name = "isDeliver", value = "배송기사 여부", dataType = "boolean", paramType = "query", required = true, defaultValue = "false"),
+            @ApiImplicitParam(name = "isOperator", value = "오퍼레이터 여부", dataType = "boolean", paramType = "query", required = true, defaultValue = "false"),
             @ApiImplicitParam(name = "memberName", value = "이름", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberMobileNumber", value = "핸드폰번호(01012341234)", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "memberZipCode", value = "우편번호(12345)", dataType = "string", paramType = "query", required = false),
@@ -57,7 +60,10 @@ public class MemberController {
     })
     public ResponseEntity<ApiResultObjectDTO> regMember(@RequestParam(value = "loginId") String loginId,
                                                         @RequestParam(value = "loginPassword") String loginPassword,
-                                                        @RequestParam(value = "memberType") String memberType,
+                                                        //@RequestParam(value = "memberType") String memberType,
+                                                        @RequestParam(value = "isUser") boolean isUser,
+                                                        @RequestParam(value = "isDeliver") boolean isDeliver,
+                                                        @RequestParam(value = "isOperator") boolean isOperator,
                                                         @RequestParam(value = "memberName") String memberName,
                                                         @RequestParam(value = "memberMobileNumber") String memberMobileNumber,
                                                         @RequestParam(value = "memberZipCode", required = false) String memberZipCode,
@@ -72,7 +78,7 @@ public class MemberController {
                                                         @RequestParam(value = "isPush") boolean isPush) {
 
         ApiResultObjectDTO resultObjectDTO = memberRepository.regMemberRepository(
-                loginId, loginPassword, memberType, memberName, memberMobileNumber, memberZipCode, memberAddress,
+                loginId, loginPassword, isUser, isDeliver, isOperator, memberName, memberMobileNumber, memberZipCode, memberAddress,
                 memberAddressDetail, memberBirthday, memberGender, memberEmailAddress, deviceUuId, osType, pushToken, isPush
         );
         return ResponseEntity.ok(resultObjectDTO);
@@ -120,12 +126,12 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation("회원 로그인")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "loginId", value = "아이디", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "loginPassword", value = "패스워드", dataType = "string", paramType = "query", required = true),
-            @ApiImplicitParam(name = "memberType", value = "회원종류(관리자:ADMIN, 사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true)
+            @ApiImplicitParam(name = "memberType", value = "회원종류(사용자:USER, 배송기사:DELIVER, 오퍼레이터:OPERATOR)", dataType = "string", paramType = "query", required = true)
     })
     @ApiResponses(value = {
             @ApiResponse(code = 901, message = "CUSTOM :: 로그인 에러(아이디 또는 비밀번호가 틀림)"),

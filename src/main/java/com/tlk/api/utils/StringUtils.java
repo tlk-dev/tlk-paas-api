@@ -59,7 +59,7 @@ public class StringUtils {
     }
 
     public static void main(String[] args) {
-        String s = "TP_0000001";
-        System.out.println(convertYyyymmdd("2020-08-13 17:15:15"));
+        String s = "";
+        System.out.println(TlkPaasUtils.generatePackagingCode(s));
     }
 }
